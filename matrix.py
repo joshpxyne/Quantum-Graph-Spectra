@@ -7,21 +7,18 @@ from pyquil.paulis import PauliSum
 from pyquil.api import WavefunctionSimulator
 import pyquil.api as api
 import math
+import random
+import time
+from networkx.drawing.nx_agraph import graphviz_layout
+import matplotlib.pyplot as plt
 
 qvm = api.QVMConnection()
-
-sim = WavefunctionSimulator(random_seed=1337)
-
-num_layers = 20
+sim = WavefunctionSimulator()
+num_layers = 5
 
 from pyquil.paulis import sX, sZ, sI
 
-H = 0.2*sX(2)*sZ(1)*sX(0) + 0.9*sX(2)*sI(1)*sX(0) + 0.3*sZ(2)*sZ(1)*sZ(0)
-
-# c_1 = 0.5*(sI(0)+sZ(0))
-# c_2 = 0.5*(sX(0)+(sZ(0)*sX(0)))
-# c_3 = 0.5*(sX(0)-(sZ(0)*sX(0)))
-# c_4 = 0.5*(sI(0)-sZ(0))
+# H = 0.2*sX(2)*sZ(1)*sX(0) + 0.9*sX(2)*sI(1)*sX(0) + 0.3*sZ(2)*sZ(1)*sZ(0)
 
 c_1 = lambda n: 0.5*(sI(n)+sZ(n))
 c_2 = lambda n: 0.5*(sX(n)+(sZ(n)*sX(n)))
@@ -32,17 +29,32 @@ c_4 = lambda n: 0.5*(sI(n)-sZ(n))
 ### simplify_pauli_sum(pauli_sum)
 
 # test_adjacency = np.matrix('0 1 1 0; 1 0 1 1; 1 1 0 1; 0 1 1 0')
-test_adjacency = np.matrix('0 1 1 1 1 1 1 0; \
-                            1 0 1 1 1 1 1 1; \
-                            1 1 0 1 1 1 1 1; \
-                            1 1 1 0 1 1 1 1; \
-                            1 1 1 1 0 1 1 1; \
-                            1 1 1 1 1 0 1 1; \
-                            1 1 1 1 1 1 0 1; \
-                            0 1 1 1 1 1 1 0')
+
+def adjacency_construct(size,show):
+    test_adjacency = np.zeros((size,size)).astype(int)
+    for i in range(size):
+        for j in range(i,size):
+            if i!=j:
+                if random.uniform(0, 1) < 0.5:
+                    test_adjacency[i][j] = 1
+                    test_adjacency[j][i] = 1
+    if (show):
+        G = nx.from_numpy_matrix(test_adjacency)
+        nx.draw(G, cmap = plt.get_cmap('jet'))
+        plt.show()
+    print(test_adjacency)
+    return test_adjacency
 
 
-
+# test_adjacency = np.matrix('0 1 1 1 1 0 1 0; \
+#                             1 0 1 1 1 1 1 1; \
+#                             1 1 0 1 1 1 1 0; \
+#                             1 1 1 0 1 1 1 1; \
+#                             1 1 1 1 0 1 1 1; \
+#                             0 1 1 1 1 0 1 1; \
+#                             1 1 1 1 1 1 0 1; \
+#                             0 1 0 1 1 1 1 0')
+# print(test_adjacency)
 
 def adjacencyBuilder(adjacency_matrix,n) -> PauliSum:
     if adjacency_matrix.shape == (2,2):
@@ -81,9 +93,6 @@ def adjacencyBuilder(adjacency_matrix,n) -> PauliSum:
         Pauli_D = c_4(n)*adjacencyBuilder(Adjacency_D,n+1)
         return Pauli_A + Pauli_B + Pauli_C + Pauli_D
 
-print(adjacencyBuilder(test_adjacency,0))
-print(unitary_tools.lifted_pauli(adjacencyBuilder(test_adjacency,0), range(int(math.log(test_adjacency.shape[0],2)))))
-
 def ansatz(params, num_layers, num_qubits):
     program = Program()
     for layer in range(num_layers):
@@ -99,15 +108,46 @@ def ansatz(params, num_layers, num_qubits):
 def expectation(params, num_qubits, hamiltonian):
     program = ansatz(params, num_layers, num_qubits)
     wave = sim.expectation(program,hamiltonian)
-    print(wave)
+    # print(wave)
     return wave
-
-
 
 def solveVQE(hamiltonian: PauliSum) -> float:
     num_qubits = hamiltonian.get_qubits()
     initial_params = np.random.uniform(low = 0, high = 2*np.pi, size = ((num_layers+1)*len(num_qubits),))
     minimum = minimize(expectation, initial_params, method='Nelder-Mead', args=(len(num_qubits), hamiltonian))
     return minimum.fun
-test_adjacency_vqe = np.matrix('0 1; 1 0')
-print(solveVQE(adjacencyBuilder(test_adjacency,0)))
+
+def performanceTests(maximum):
+    quantum_times = []
+    classical_times = []
+    timesteps = range(2,maximum)
+    for i in range(2,maximum):
+        test_adjacency = adjacency_construct(2**i,False)
+        # Paulis = adjacencyBuilder(test_adjacency,0)
+        # print(Paulis)
+        # print(unitary_tools.lifted_pauli(Paulis, range(int(math.log(test_adjacency.shape[0],2)))))
+        classical_time_init = time.time()
+        print(np.linalg.eig(test_adjacency))
+        classical_time = time.time()-classical_time_init
+        # quantum_time_init = time.time()
+        # print(solveVQE(Paulis))
+        # quantum_time = time.time() - quantum_time_init
+        # quantum_times.append(quantum_time)
+        classical_times.append(classical_time)
+        # print("quantum",quantum_time)
+        # print("classical",classical_time)
+    # print(quantum_times)
+    print(classical_times)
+    # plt.plot(timesteps,quantum_times,'bo')
+    plt.plot(timesteps,classical_times,'go')
+    plt.show()
+
+# H = 1*sX(0)
+# solveVQE(H)
+
+# classical_times = [0.0006008148193359375, 0.0008120536804199219, 0.002541065216064453, 0.0011060237884521484]
+# timesteps = range(2,6)
+# plt.plot(timesteps,classical_times,'go')
+# plt.show()
+performanceTests(8)
+    
