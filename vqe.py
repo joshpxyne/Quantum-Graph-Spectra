@@ -2,11 +2,22 @@ import numpy as np
 from scipy.optimize import minimize
 from pyquil import Program, get_qc
 from pyquil.gates import RX, RZ, CNOT
-from pyquil.api import WavefunctionSimulator, QVMConnection
+from pyquil.api import WavefunctionSimulator
 from pyquil.paulis import PauliSum
+from pyquil.api._devices import list_devices, list_lattices
 
-qvm = QVMConnection()
+# qvm = QVMConnection()
 sim = WavefunctionSimulator()
+
+qc = get_qc("Aspen-4-2Q-A")
+# qc = get_qc("9q-generic-qvm")
+
+device_names = list_devices()  # Available devices are subject to change.
+lattice_names = list(list_lattices().keys())
+
+lattice_name = lattice_names[0]
+
+print(lattice_name)
 
 def ansatz(params, num_layers, num_qubits):
     program = Program()
