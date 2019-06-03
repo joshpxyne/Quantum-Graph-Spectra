@@ -82,8 +82,8 @@ def directedAdjacencyConstruct(size,show,density):
                 if random.uniform(0, 1) < density:
                     test_adjacency[i][j] = 1
     if (show):
-        G = nx.from_numpy_matrix(test_adjacency)
-        nx.draw(G, cmap = plt.get_cmap('jet'))
+        G = nx.from_numpy_matrix(test_adjacency,create_using=nx.DiGraph())
+        nx.draw(G, cmap = plt.get_cmap('jet'), arrows=True)
         plt.show()
     print(test_adjacency)
     return test_adjacency
@@ -98,6 +98,10 @@ def undirectedLaplacianConstruct(size,show,density):
                 if random.uniform(0, 1) < density:
                     test_laplacian[i][j] = 1
                     test_laplacian[j][i] = 1
+    if (show):
+        G = nx.from_numpy_matrix(test_laplacian)
+        nx.draw(G, cmap = plt.get_cmap('jet'))
+        plt.show()
     test_laplacian*= -1
     for i in range(size):
         test_laplacian[i][i] = -1*sum(test_laplacian[i])
@@ -113,6 +117,10 @@ def directedOutDegreeLaplacianConstruct(size,show,density):
             if i!=j:
                 if random.uniform(0, 1) < density:
                     test_laplacian[i][j] = 1
+    if (show):
+        G = nx.from_numpy_matrix(test_laplacian,create_using=nx.DiGraph())
+        nx.draw(G, cmap = plt.get_cmap('jet'), arrows=True)
+        plt.show()
     test_laplacian*= -1
     for i in range(size):
         test_laplacian[i][i] = -1*sum(test_laplacian[i])
@@ -128,6 +136,10 @@ def directedInDegreeLaplacianConstruct(size,show,density):
             if i!=j:
                 if random.uniform(0, 1) < density:
                     test_laplacian[i][j] = 1
+    if (show):
+        G = nx.from_numpy_matrix(test_laplacian,create_using=nx.DiGraph())
+        nx.draw(G, cmap = plt.get_cmap('jet'), arrows=True)
+        plt.show()
     test_laplacian*= -1
     for i in range(size):
         test_laplacian[i][i] = -1*sum([test_laplacian[j][i] for j in range(size)])
@@ -171,7 +183,7 @@ test_adjacency = np.matrix('0 0 0 1; \
                             0 1 0 0; \
                             1 1 0 0')
 
-# print(unitary_tools.lifted_pauli(pauliBuilder(undirectedAdjacencyConstruct(4,False,0.5),0),range(2)))
+# print(laplacianPauliBuilder(directedInDegreeLaplacianConstruct(8,True,0.5)),range(3))
 
 
     
