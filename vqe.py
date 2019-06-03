@@ -9,7 +9,7 @@ from pyquil.api._devices import list_devices, list_lattices
 # qvm = QVMConnection()
 sim = WavefunctionSimulator()
 
-qc = get_qc("Aspen-4-2Q-A")
+qc = get_qc("Aspen-4-3Q-A")
 # qc = get_qc("9q-generic-qvm")
 
 device_names = list_devices()  # Available devices are subject to change.

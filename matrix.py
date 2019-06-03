@@ -1,4 +1,5 @@
 import random
+import math
 import numpy as np
 import networkx as nx
 from scipy.optimize import minimize
@@ -15,7 +16,9 @@ c_3 = lambda n: 0.5*(sX(n)-(sZ(n)*sX(n)))
 c_4 = lambda n: 0.5*(sI(n)-sZ(n))
 
 def adjacencyConstruct(size,show,density):
-    test_adjacency = np.zeros((size,size)).astype(int)
+    nearest_power = math.ceil(math.log2(size))
+    test_adjacency = np.zeros((2**nearest_power,2**nearest_power)).astype(int)
+    
     for i in range(size):
         for j in range(i,size):
             if i!=j:
