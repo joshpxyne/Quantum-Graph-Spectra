@@ -1,3 +1,9 @@
+'''
+For running performance tests.
+
+qcs reserve --lattice <Aspen-?-??-?>
+'''
+
 import matrix
 import vqe
 
@@ -6,16 +12,17 @@ import statistics as stats
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from pyquil import unitary_tools
+from pyquil import unitary_tools, paulis
+import sys
 
-layers = 5
+np.set_printoptions(threshold=sys.maxsize)
 
-def quantumVsClassical(maximum):
+def quantumVsClassical(maximum, layers):
     quantum_times = []
     classical_times = []
     timesteps = range(2,maximum)
     for i in range(2,maximum):
-        test_adjacency = matrix.adjacencyConstruct(2**i,False,0.5)
+        test_adjacency = matrix.adjacencyConstruct(i,False,0.5)
         Paulis = matrix.pauliBuilder(test_adjacency,0)
         print(Paulis)
         print(unitary_tools.lifted_pauli(Paulis, range(int(math.log(test_adjacency.shape[0],2)))))
@@ -35,11 +42,12 @@ def quantumVsClassical(maximum):
     plt.plot(timesteps,classical_times,'go')
     plt.show()
 
-def densityComparisons(num_trials, density, size):
+def densityComparisons(num_trials, density, size, layers):
     results = []
     for _ in range(num_trials):
-        test_adjacency = matrix.adjacencyConstruct(2**size,False,density)
+        test_adjacency = matrix.adjacencyConstruct(size,False,density)
         Paulis = matrix.pauliBuilder(test_adjacency,0)
+        print(Paulis)
         time_init = time.time()
         vqe.solveVQE(Paulis,layers)
         results.append(time.time() - time_init)
@@ -48,7 +56,75 @@ def densityComparisons(num_trials, density, size):
 def noiseComparisons(num_trials, density, size, noise_model):
     pass
 
-def ansatzComparisons(num_trials, density, size, ansatz):
+def layeredAnsatzTimeAccuracyComparisons(num_trials, density, size, layers):
+    time_results = []
+    diff_results = []
+    for _ in range(num_trials):
+        test_adjacency = matrix.adjacencyConstruct(size,False,density)
+        Paulis = paulis.simplify_pauli_sum(matrix.pauliBuilder(test_adjacency,0))
+        print(Paulis)
+        time_init = time.time()
+        result = vqe.solveVQE(Paulis,layers)
+        time_results.append(time.time() - time_init)
+        correct = min(np.linalg.eig(test_adjacency)[0])
+        diff = abs(result - correct)
+        diff_results.append(diff)
+    return stats.mean(time_results), stats.mean(diff_results)
+
+def differentAnsatzComparisons(num_trials, density, size, layers):
     pass
 
-print(quantumVsClassical(4))
+# densities.append(densityComparisons(20,0.1,2,5))
+# densities.append(densityComparisons(20,0.3,2,5))
+# densities.append(densityComparisons(20,0.5,2,5))
+# densities.append(densityComparisons(20,0.7,2,5))
+# densities.append(densityComparisons(20,0.9,2,5))
+# densities.append(densityComparisons(20,1,2,5))
+
+ansatzes = []
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(10,0.5,4,3))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(5,0.5,5,3))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(5,0.5,8,3))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(2,0.5,9,3))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(2,0.5,16,3))
+# print(ansatzes)
+
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,4,3))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,8,3))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,16,3))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,32,3))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,32,3))
+# print(ansatzes)
+steps = 35
+for i in range(steps+1):
+    density = float(i)/float(steps)
+
+    ansatzes.append(layeredAnsatzTimeAccuracyComparisons(3,density,8,3))
+    print(density)
+    print(ansatzes)
+
+
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,2))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,3))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,4))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,5))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,10))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,15))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,20))
+# print(ansatzes)
+# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,30))
+# print(ansatzes)
