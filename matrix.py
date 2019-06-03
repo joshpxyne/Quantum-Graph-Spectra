@@ -23,7 +23,6 @@ print(unitary_tools.lifted_pauli((sX(0) + c_4(0))*c_1(1),range(2)))
 
 def pauliBuilder(matrix) -> PauliSum:
     n = math.ceil(math.log2(matrix.shape[0]))-1
-    if n==1:print(matrix)
     if matrix.shape == (2,2):
         if str(matrix)==str(np.matrix('0 0; 0 0')): return sI(n) - sI(n)
         if str(matrix)==str(np.matrix('1 0; 0 1')): return sI(n)
@@ -173,9 +172,6 @@ test_adjacency = np.matrix('0 0 0 1; \
                             1 1 0 0')
 
 # print(unitary_tools.lifted_pauli(pauliBuilder(undirectedAdjacencyConstruct(4,False,0.5),0),range(2)))
-qubits = 2
-print(unitary_tools.lifted_pauli(laplacianPauliBuilder(directedOutDegreeLaplacianConstruct(4,False,0.5)),range(qubits)))
-
 
 
     

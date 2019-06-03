@@ -45,8 +45,8 @@ def quantumVsClassical(maximum, layers):
 def densityComparisons(num_trials, density, size, layers):
     results = []
     for _ in range(num_trials):
-        test_adjacency = matrix.adjacencyConstruct(size,False,density)
-        Paulis = matrix.pauliBuilder(test_adjacency,0)
+        test_adjacency = matrix.undirectedAdjacencyConstruct(size,False,density)
+        Paulis = matrix.pauliBuilder(test_adjacencyw)
         print(Paulis)
         time_init = time.time()
         vqe.solveVQE(Paulis,layers)
@@ -56,19 +56,42 @@ def densityComparisons(num_trials, density, size, layers):
 def noiseComparisons(num_trials, density, size, noise_model):
     pass
 
-def layeredAnsatzTimeAccuracyComparisons(num_trials, density, size, layers):
+def layeredAnsatzTimeAccuracyComparisons(num_trials, density, size, layers, mat_type, eigenvalue):
+
     time_results = []
     diff_results = []
     for _ in range(num_trials):
-        test_adjacency = matrix.adjacencyConstruct(size,False,density)
-        Paulis = paulis.simplify_pauli_sum(matrix.pauliBuilder(test_adjacency,0))
+        if mat_type==1: # undirected adjacency
+            test_matrix = matrix.undirectedAdjacencyConstruct(size,False,density)
+            Paulis = paulis.simplify_pauli_sum(matrix.pauliBuilder(test_matrix))
+        if mat_type==2: # directed adjacency
+            test_matrix = matrix.directedAdjacencyConstruct(size,False,density)
+            print(test_matrix)
+            Paulis = paulis.simplify_pauli_sum(matrix.pauliBuilder(test_matrix))
+        if mat_type==3: # undirected laplacian
+            test_matrix = matrix.undirectedLaplacianConstruct(size,False,density)
+            Paulis = paulis.simplify_pauli_sum(matrix.laplacianPauliBuilder(test_matrix))
+        if mat_type==4: # directed laplacian, outdegree
+            test_matrix = matrix.directedOutDegreeLaplacianConstruct(size,False,density)
+            Paulis = paulis.simplify_pauli_sum(matrix.laplacianPauliBuilder(test_matrix))
+        if mat_type==5: # directed laplacian, indegree
+            test_matrix = matrix.directedInDegreeLaplacianConstruct(size,False,density)
+            Paulis = paulis.simplify_pauli_sum(matrix.laplacianPauliBuilder(test_matrix))
         print(Paulis)
         time_init = time.time()
-        result = vqe.solveVQE(Paulis,layers)
+        if eigenvalue=="max":
+            result = -1*vqe.solveVQE(-1*Paulis,layers)
+        else:
+            result = vqe.solveVQE(Paulis,layers)
         time_results.append(time.time() - time_init)
-        correct = min(np.linalg.eig(test_adjacency)[0])
+        if eigenvalue=="max":
+            correct = max(np.linalg.eig(test_matrix)[0])
+        else:
+            correct = min(np.linalg.eig(test_matrix)[0])
+        print("correctEV:",correct)
         diff = abs(result - correct)
         diff_results.append(diff)
+
     return stats.mean(time_results), stats.mean(diff_results)
 
 def differentAnsatzComparisons(num_trials, density, size, layers):
@@ -103,13 +126,12 @@ ansatzes = []
 # print(ansatzes)
 # ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,32,3))
 # print(ansatzes)
-steps = 35
-for i in range(steps+1):
-    density = float(i)/float(steps)
+steps = 3
+# for i in range(steps+1):
+#     density = float(i)/float(steps)
 
-    ansatzes.append(layeredAnsatzTimeAccuracyComparisons(3,density,8,3))
-    print(density)
-    print(ansatzes)
+ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,8,3,mat_type=3,eigenvalue="max"))
+print(ansatzes)
 
 
 # ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,2))

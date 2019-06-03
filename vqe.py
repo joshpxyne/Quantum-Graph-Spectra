@@ -9,15 +9,8 @@ from pyquil.api._devices import list_devices, list_lattices
 # qvm = QVMConnection()
 sim = WavefunctionSimulator()
 
-qc = get_qc("Aspen-4-3Q-A")
-# qc = get_qc("9q-generic-qvm")
-
-device_names = list_devices()  # Available devices are subject to change.
-lattice_names = list(list_lattices().keys())
-
-lattice_name = lattice_names[0]
-
-print(lattice_name)
+# qc = get_qc("Aspen-4-3Q-A")
+qc = get_qc("9q-generic-qvm")
 
 def ansatz(params, num_layers, num_qubits):
     program = Program()
