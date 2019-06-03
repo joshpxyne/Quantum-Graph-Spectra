@@ -4,6 +4,10 @@ from pyquil import Program, get_qc
 from pyquil.gates import RX, RZ, CNOT
 from pyquil.api import WavefunctionSimulator, QVMConnection
 from pyquil.paulis import PauliSum
+from pyquil.api._devices import list_devices, list_lattices
+
+device_names = list_devices()
+lattice_names = list(list_lattices().keys())
 
 qvm = QVMConnection()
 sim = WavefunctionSimulator()

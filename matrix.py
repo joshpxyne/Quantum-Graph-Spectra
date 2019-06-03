@@ -85,5 +85,11 @@ def pauliBuilder(adjacency_matrix,n) -> PauliSum:
 # plt.plot(timesteps,classical_times,'go')
 # plt.show()
 
+test_adjacency = np.matrix('0 1 1 1; \
+                            0 0 0 1; \
+                            1 1 0 1; \
+                            0 1 0 0')
+print(pauliBuilder(test_adjacency,0))
+
 
     

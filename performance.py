@@ -20,10 +20,10 @@ def quantumVsClassical(maximum):
         print(Paulis)
         print(unitary_tools.lifted_pauli(Paulis, range(int(math.log(test_adjacency.shape[0],2)))))
         classical_time_init = time.time()
-        print(np.linalg.eig(test_adjacency))
         classical_time = time.time()-classical_time_init
         quantum_time_init = time.time()
-        print(vqe.solveVQE(Paulis,layers))
+        print("quantminnn:",vqe.solveVQE(Paulis,layers))
+        print("difffff:",abs(min(np.linalg.eig(test_adjacency)[0] - vqe.solveVQE(Paulis,layers))))
         quantum_time = time.time() - quantum_time_init
         quantum_times.append(quantum_time)
         classical_times.append(classical_time)
@@ -51,4 +51,4 @@ def noiseComparisons(num_trials, density, size, noise_model):
 def ansatzComparisons(num_trials, density, size, ansatz):
     pass
 
-print(densityComparisons(20,0.5,2))
+print(quantumVsClassical(4))
