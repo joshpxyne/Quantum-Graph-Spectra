@@ -184,6 +184,3 @@ test_adjacency = np.matrix('0 0 0 1; \
                             1 1 0 0')
 
 # print(laplacianPauliBuilder(directedInDegreeLaplacianConstruct(8,True,0.5)),range(3))
-
-
-    
