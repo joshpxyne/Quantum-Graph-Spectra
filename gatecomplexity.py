@@ -7,7 +7,6 @@
 import random
 import numpy as np
 import networkx as nx
-from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from pyquil.paulis import PauliSum, sX, sZ, sI
 from networkx.drawing.nx_agraph import graphviz_layout
@@ -89,7 +88,7 @@ def pauliBuilder(adjacency_matrix,n) -> PauliSum:
 # In[161]:
 
 
-#My code starts here 
+# Nick's code starts here 
 import itertools
 from operator import itemgetter
 import matplotlib.pyplot as plt

@@ -1,9 +1,15 @@
+'''
+@author: Josh Payne
+
+Description: For creating bar charts
+'''
+
 import matplotlib.pyplot as plt
 import numpy as np
 
+### Get values from performance.py, input here ###
 x = np.arange(5)
 lst = [(26.18771629333496, 0.0005009889443475579), (42.352642345428464, 0.22465062206232664), (28.165834760665895, 0.002412561561502535), (44.75053324699402, 0.2904245382095795), (46.56294770240784, 0.5033196008884878)]
-
 
 times = [i[0] for i in lst]
 accuracies = [i[1] for i in lst]

@@ -1,25 +1,23 @@
+'''
+@author: Josh Payne
+
+Description: For generating graphs, converting adjacency/Laplacian matrices into PauliSums
+'''
+
 import random
 import math
 import numpy as np
 import networkx as nx
-from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from pyquil.paulis import PauliSum, sX, sZ, sI
 from pyquil import unitary_tools
 from networkx.drawing.nx_agraph import graphviz_layout
 import copy
 
-
-# H = 0.2*sX(2)*sZ(1)*sX(0) + 0.9*sX(2)*sI(1)*sX(0) + 0.3*sZ(2)*sZ(1)*sZ(0)
-
 c_1 = lambda n: 0.5*(sI(n)+sZ(n))
 c_2 = lambda n: 0.5*(sX(n)+(sZ(n)*sX(n)))
 c_3 = lambda n: 0.5*(sX(n)-(sZ(n)*sX(n)))
 c_4 = lambda n: 0.5*(sI(n)-sZ(n))
-
-print(unitary_tools.lifted_pauli((sX(0) + c_4(0))*c_1(1),range(2)))
-
-
 
 def pauliBuilder(matrix) -> PauliSum:
     n = math.ceil(math.log2(matrix.shape[0]))-1
@@ -146,25 +144,6 @@ def directedInDegreeLaplacianConstruct(size,show,density):
     print(test_laplacian)
     return test_laplacian
 
-# test_adjacency = np.matrix('0 1 1 1 1 0 1 0; \
-#                             1 0 1 1 1 1 1 1; \
-#                             1 1 0 1 1 1 1 0; \
-#                             1 1 1 0 1 1 1 1; \
-#                             1 1 1 1 0 1 1 1; \
-#                             0 1 1 1 1 0 1 1; \
-#                             1 1 1 1 1 1 0 1; \
-#                             0 1 0 1 1 1 1 0')
-# print(test_adjacency)
-
-
-# H = 1*sX(0)
-# solveVQE(H)
-
-# classical_times = [0.0006008148193359375, 0.0008120536804199219, 0.002541065216064453, 0.0011060237884521484]
-# timesteps = range(2,6)
-# plt.plot(timesteps,classical_times,'go')
-# plt.show()
-
 def laplacianPauliBuilder(laplacian_matrix) -> PauliSum:
     adjacency_representation = copy.copy(laplacian_matrix)
     for i in range(adjacency_representation.shape[0]):
@@ -178,9 +157,12 @@ def laplacianPauliBuilder(laplacian_matrix) -> PauliSum:
         laplacian_pauli+=deg_pauli
     return laplacian_pauli
 
-test_adjacency = np.matrix('0 0 0 1; \
-                            0 0 1 1; \
-                            0 1 0 0; \
-                            1 1 0 0')
+### Test/debug down here ###
+
+
+# test_adjacency = np.matrix('0 0 0 1; \
+#                             0 0 1 1; \
+#                             0 1 0 0; \
+#                             1 1 0 0')
 
 # print(laplacianPauliBuilder(directedInDegreeLaplacianConstruct(8,True,0.5)),range(3))

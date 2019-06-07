@@ -1,9 +1,15 @@
+'''
+@author: Josh Payne
 
+Description: For creating multiple overlaid charts
+'''
 
 from mpl_toolkits.axes_grid1 import host_subplot
 import mpl_toolkits.axisartist as AA
 import matplotlib.pyplot as plt
 import numpy as np
+
+### Get values from performance.py, input here ###
 
 x = [4, 5, 8, 9, 16, 32, 64]
 lst =  [(2.585895228385925, 4.9364027687737175e-08), (13.683554983139038, 0.035110609181115214), (16.250244092941283, 0.17863540370194406), (63.24338710308075, 0.2964172356868715), (81.63710451126099, 0.4288713187054065), (457.574907541275, 1.5497983761583067), (2580.9958889484406, 3.939294261935955)]

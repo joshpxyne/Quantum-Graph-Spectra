@@ -1,15 +1,23 @@
+'''
+@author: Josh Payne
+
+Description: Implements VQE algorithm.
+
+'''
+
 import numpy as np
 from scipy.optimize import minimize
 from pyquil import Program, get_qc
 from pyquil.gates import RX, RZ, CNOT
 from pyquil.api import WavefunctionSimulator
 from pyquil.paulis import PauliSum
-from pyquil.api._devices import list_devices, list_lattices
 
-# qvm = QVMConnection()
 sim = WavefunctionSimulator()
 
+### QC/QVM ###
+### input lattice name here ###
 # qc = get_qc("Aspen-4-3Q-A")
+### comment out if using Rigetti QCS ###
 qc = get_qc("9q-generic-qvm")
 
 def ansatz(params, num_layers, num_qubits):

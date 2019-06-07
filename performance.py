@@ -1,7 +1,12 @@
 '''
-For running performance tests.
+@author: Josh Payne
 
-qcs reserve --lattice <Aspen-?-??-?>
+Description: For running performance tests
+
+Instructions: add print statements at the bottom to test the different parameters on QVM or QCS.
+
+To reserve a lattice: $ qcs reserve --lattice <Aspen-?-??-?>
+
 '''
 
 import matrix
@@ -22,20 +27,20 @@ def quantumVsClassical(maximum, layers):
     classical_times = []
     timesteps = range(2,maximum)
     for i in range(2,maximum):
-        test_adjacency = matrix.adjacencyConstruct(i,False,0.5)
-        Paulis = matrix.pauliBuilder(test_adjacency,0)
+        test_adjacency = matrix.undirectedAdjacencyConstruct(i,False,0.5)
+        Paulis = matrix.pauliBuilder(test_adjacency)
         print(Paulis)
         print(unitary_tools.lifted_pauli(Paulis, range(int(math.log(test_adjacency.shape[0],2)))))
         classical_time_init = time.time()
         classical_time = time.time()-classical_time_init
         quantum_time_init = time.time()
-        print("quantminnn:",vqe.solveVQE(Paulis,layers))
-        print("difffff:",abs(min(np.linalg.eig(test_adjacency)[0] - vqe.solveVQE(Paulis,layers))))
+        print("estimated eigenvalue: ",vqe.solveVQE(Paulis,layers))
+        print("absolute difference: ",abs(min(np.linalg.eig(test_adjacency)[0] - vqe.solveVQE(Paulis,layers))))
         quantum_time = time.time() - quantum_time_init
         quantum_times.append(quantum_time)
         classical_times.append(classical_time)
-        print("quantum",quantum_time)
-        print("classical",classical_time)
+        print("quantum runtime: ",quantum_time)
+        print("classical runtime: ",classical_time)
     # print(quantum_times)
     print(classical_times)
     # plt.plot(timesteps,quantum_times,'bo')
@@ -46,7 +51,7 @@ def densityComparisons(num_trials, density, size, layers):
     results = []
     for _ in range(num_trials):
         test_adjacency = matrix.undirectedAdjacencyConstruct(size,False,density)
-        Paulis = matrix.pauliBuilder(test_adjacencyw)
+        Paulis = matrix.pauliBuilder(test_adjacency)
         print(Paulis)
         time_init = time.time()
         vqe.solveVQE(Paulis,layers)
@@ -56,8 +61,8 @@ def densityComparisons(num_trials, density, size, layers):
 def noiseComparisons(num_trials, density, size, noise_model):
     pass
 
-def layeredAnsatzTimeAccuracyComparisons(num_trials, density, size, layers, mat_type, eigenvalue):
 
+def layeredAnsatzTimeAccuracyComparisons(num_trials, density, size, layers, mat_type, eigenvalue):
     time_results = []
     diff_results = []
     for _ in range(num_trials):
@@ -97,56 +102,13 @@ def layeredAnsatzTimeAccuracyComparisons(num_trials, density, size, layers, mat_
 def differentAnsatzComparisons(num_trials, density, size, layers):
     pass
 
-# densities.append(densityComparisons(20,0.1,2,5))
-# densities.append(densityComparisons(20,0.3,2,5))
-# densities.append(densityComparisons(20,0.5,2,5))
-# densities.append(densityComparisons(20,0.7,2,5))
-# densities.append(densityComparisons(20,0.9,2,5))
-# densities.append(densityComparisons(20,1,2,5))
+
+### Run tests here ###
 
 ansatzes = []
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(10,0.5,4,3))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(5,0.5,5,3))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(5,0.5,8,3))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(2,0.5,9,3))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(2,0.5,16,3))
-# print(ansatzes)
+steps = 30
+for i in range(steps+1):
+    density = float(i)/float(steps)
+    ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,density,8,3,mat_type=3,eigenvalue="max"))
 
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,4,3))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,8,3))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,16,3))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,32,3))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,32,3))
-# print(ansatzes)
-steps = 3
-# for i in range(steps+1):
-#     density = float(i)/float(steps)
-
-ansatzes.append(layeredAnsatzTimeAccuracyComparisons(1,0.5,8,3,mat_type=3,eigenvalue="max"))
 print(ansatzes)
-
-
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,2))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,3))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,4))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,5))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,10))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,15))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,20))
-# print(ansatzes)
-# ansatzes.append(layeredAnsatzTimeAccuracyComparisons(20,0.5,2,30))
-# print(ansatzes)
