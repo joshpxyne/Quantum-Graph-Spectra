@@ -1,6 +1,6 @@
 # Quantum-Graph-Spectra
 
-Final project for CS 269Q and launchpad for further investigations into the application of quantum computing to spectral graph theory. Here, we leverage the Variational Quantum Eigensolver (VQE) algorithm to efficiently compute eigenvalues of adjacency and Laplacian (normalized or otherwise) matrices of graphs.
+Investigations into the application of quantum computing to spectral graph theory. Here, we leverage the Variational Quantum Eigensolver (VQE) algorithm to efficiently compute eigenvalues of adjacency and Laplacian (normalized or otherwise) matrices of graphs.
 
 ### Prerequisites
 
